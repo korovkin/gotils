@@ -1,2 +1,2 @@
 # gotils
-quick and dirty Go lang (golang) utils
+Quick and dirty Go lang (golang) utils
