@@ -18,6 +18,8 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"sync/atomic"
+	"time"
 )
 
 const (
@@ -396,6 +398,16 @@ func PrivateIPV4GetLower16() (uint16, error) {
 	return uint16(ip[2])<<8 + uint16(ip[3]), nil
 }
 
+// PrivateIPV4GetLower16OrDie gets the lower 16 bits of the IP address
+func PrivateIPV4GetLower16OrDie() uint16 {
+	ip, err := PrivateIPV4Get()
+	if err != nil {
+		log.Fatalln("PrivateIPV4GetLower16OrDie: failed:", err.Error())
+		return 0
+	}
+	return uint16(ip[2])<<8 + uint16(ip[3])
+}
+
 // HTTPParamGetInt get an integer param from an HTTP request
 func HTTPParamGetInt(req *http.Request, key string, defaultValue int) int {
 	vv := req.URL.Query().Get(key)
@@ -414,4 +426,32 @@ func HTTPParamGetString(req *http.Request, key string, defaultValue string) stri
 		v = vv
 	}
 	return v
+}
+
+var monotonicUniqueCounter = uint32(0)
+var machineID = PrivateIPV4GetLower16OrDie()
+
+// GenerateUniqueID sorted by time
+func GenerateUniqueID(idType string, now time.Time) (string, string) {
+	var i = (atomic.AddUint32(&monotonicUniqueCounter, 1)) % 0xFFFF
+
+	dailyFolderID := fmt.Sprintf(
+		"%04d%02d%02d",
+		now.Year(),
+		now.Month(),
+		now.Day())
+
+	uniqueID := fmt.Sprintf("%04d%02d%02d%02d%02d%02dn%010Xm%04Xi%03X_%s",
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		now.Hour(),
+		now.Minute(),
+		now.Second(),
+		now.Nanosecond(),
+		machineID,
+		i,
+		idType)
+
+	return dailyFolderID, uniqueID
 }
