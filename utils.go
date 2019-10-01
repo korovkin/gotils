@@ -133,6 +133,7 @@ func ReadJSONFile(filename string, o interface{}) error {
 // WriteJSONFile writes the object 'o' as JSON into the given file
 func WriteJSONFile(filename string, o interface{}) error {
 	log.Println("WriteJSONFile:", filename)
+
 	err := ioutil.WriteFile(filename, []byte(ToJSONString(o)), 0666)
 	CheckNotFatal(err)
 	if err != nil {
@@ -143,6 +144,8 @@ func WriteJSONFile(filename string, o interface{}) error {
 
 // WriteJSONFileCompressed write o as a compressed JSON file (gzip)
 func WriteJSONFileCompressed(filename string, o interface{}) error {
+	log.Println("WriteJSONFileCompressed:", filename)
+
 	var b bytes.Buffer
 	w, err := gzip.NewWriterLevel(&b, gzip.BestCompression)
 	CheckNotFatal(err)
