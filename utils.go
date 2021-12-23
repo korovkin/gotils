@@ -350,7 +350,12 @@ func URLIsValid(urlString string) error {
 
 // Implode2 cancatenates two strings with a seperator 'sep'
 func Implode2(a, b string) string {
-	return a + sep + b
+	return strings.Join([]string{a, b}, sep)
+}
+
+// Implode3 cancatenates two strings with a seperator 'sep'
+func Implode3(a, b, c string) string {
+	return strings.Join([]string{a, b, c}, sep)
 }
 
 // Explode2 splits the string by a seperator 'sep'
@@ -362,6 +367,19 @@ func Explode2(x string) (a, b string) {
 		return l[0], ""
 	}
 	return "", ""
+}
+
+// Explode3 splits the string by a seperator 'sep'
+func Explode3(x string) (a, b, c string) {
+	l := strings.Split(x, sep)
+	if len(l) > 2 {
+		return l[0], l[1], l[2]
+	} else if len(l) > 1 {
+		return l[0], l[1], ""
+	} else if len(l) > 0 {
+		return l[0], "", ""
+	}
+	return "", "", ""
 }
 
 // PrivateIPV4Get gets the private IP of the current AWS/EC2 server
