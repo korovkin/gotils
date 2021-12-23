@@ -1,5 +1,5 @@
-travis:
-	go build
+travis: test build
+	@echo "done"
 
 build:
 	go build
