@@ -5,4 +5,4 @@ build:
 	go build
 
 test:
-	go test utils_test.go
+	go test *_test.go
