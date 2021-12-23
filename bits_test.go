@@ -1,10 +1,13 @@
 package gotils
 
 import (
+	"log"
+
 	. "github.com/onsi/gomega"
 
-	"github.com/korovkin/gotils"
 	"testing"
+
+	"github.com/korovkin/gotils"
 )
 
 const (
@@ -21,24 +24,25 @@ func TestBits(t *testing.T) {
 		p := &x
 
 		p.Set(FLAG_ONE)
-		Expect(x.Check(FLAG_ONE)).Should(Equal(true))
-		Expect(x.Check(FLAG_TWO)).Should(Equal(false))
+		Expect(x.CheckAny(FLAG_ONE)).Should(Equal(true))
+		Expect(x.CheckAny(FLAG_TWO)).Should(Equal(false))
 
 		p.Toggle(FLAG_TWO)
-		Expect(x.Check(FLAG_ONE)).Should(Equal(true))
-		Expect(x.Check(FLAG_TWO)).Should(Equal(true))
+		Expect(x.CheckAny(FLAG_ONE)).Should(Equal(true))
+		Expect(x.CheckAny(FLAG_TWO)).Should(Equal(true))
 
 		p.Clear(FLAG_TWO)
-		Expect(x.Check(FLAG_ONE)).Should(Equal(true))
-		Expect(x.Check(FLAG_TWO)).Should(Equal(false))
+		Expect(x.CheckAny(FLAG_ONE)).Should(Equal(true))
+		Expect(x.CheckAny(FLAG_TWO)).Should(Equal(false))
 
 		p.Clear(FLAG_ONE)
-		Expect(p.Check(FLAG_ONE)).Should(Equal(false))
-		Expect(p.Check(FLAG_TWO)).Should(Equal(false))
+		Expect(p.CheckAny(FLAG_ONE)).Should(Equal(false))
+		Expect(p.CheckAny(FLAG_TWO)).Should(Equal(false))
 
 		x.Set(FLAG_ONE | FLAG_TWO)
-		Expect(p.Check(FLAG_ONE)).Should(Equal(true))
-		Expect(p.Check(FLAG_TWO)).Should(Equal(true))
+		log.Printf("0x%x 0x%x", uint(x), uint64(FLAG_ONE|FLAG_TWO))
+		Expect(p.CheckAny(FLAG_ONE)).Should(Equal(true))
+		Expect(p.CheckAny(FLAG_TWO)).Should(Equal(true))
 	})
 
 	t.Run("bits_002", func(t *testing.T) {
@@ -51,8 +55,8 @@ func TestBits(t *testing.T) {
 		x = FLAG_ONE
 		x = gotils.Set(x, FLAG_ONE)
 		x = gotils.Set(x, FLAG_TWO)
-		Expect(x.Check((FLAG_ONE))).Should(Equal(true))
-		Expect(x.Check((FLAG_TWO))).Should(Equal(true))
+		Expect(x.CheckAny((FLAG_ONE))).Should(Equal(true))
+		Expect(x.CheckAny((FLAG_TWO))).Should(Equal(true))
 		Expect(x).Should(Equal(FLAG_TWO | FLAG_ONE))
 	})
 }

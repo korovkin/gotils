@@ -14,12 +14,20 @@ func Toggle(b, flag Bits) Bits {
 	return (b ^ flag)
 }
 
-func Has(b, flag Bits) bool {
-	return (b & flag) != 0
+func CheckAll(b, flags Bits) bool {
+	return (b & flags) == flags
 }
 
-func Check(b, flag Bits) bool {
-	return Has(b, flag)
+func CheckAny(b, flags Bits) bool {
+	return (b & flags) != 0
+}
+
+func HasAll(b, flags Bits) bool {
+	return CheckAll(b, flags)
+}
+
+func HasAny(b, flags Bits) bool {
+	return CheckAny(b, flags)
 }
 
 func (t *Bits) Set(flag Bits) {
@@ -34,10 +42,10 @@ func (t *Bits) Toggle(flag Bits) {
 	*t = ((*t) ^ flag)
 }
 
-func (t *Bits) Has(flag Bits) bool {
-	return ((*t) & flag) != 0
+func (t *Bits) CheckAny(flags Bits) bool {
+	return ((*t) & flags) != 0
 }
 
-func (t *Bits) Check(flag Bits) bool {
-	return t.Has(flag)
+func (t *Bits) CheckAll(flags Bits) bool {
+	return ((*t) & flags) == flags
 }
