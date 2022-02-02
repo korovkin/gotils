@@ -121,12 +121,12 @@ func CheckNotFatal(e error) error {
 // ReadJSONFile reads a JSON file into o
 func ReadJSONFile(filename string, o interface{}) error {
 	file, err := ioutil.ReadFile(filename)
-	CheckFatal(err)
+	CheckNotFatal(err)
 	if err != nil {
 		return err
 	}
 	err = json.Unmarshal(file, o)
-	CheckFatal(err)
+	CheckNotFatal(err)
 	return err
 }
 
@@ -201,12 +201,12 @@ func ReadJSONFileCompressed(filename string, o interface{}) error {
 // ReadXMLFile reads an XML file into o
 func ReadXMLFile(filename string, o interface{}) error {
 	file, err := ioutil.ReadFile(filename)
-	CheckFatal(err)
+	CheckNotFatal(err)
 	if err != nil {
 		return err
 	}
 	err = xml.Unmarshal(file, o)
-	CheckFatal(err)
+	CheckNotFatal(err)
 	return err
 }
 
@@ -344,7 +344,7 @@ func MD5Hash(text string) string {
 // URLIsValid check if a given string is a valid URL
 func URLIsValid(urlString string) error {
 	_, err := url.Parse(urlString)
-	CheckFatal(err)
+	CheckNotFatal(err)
 	return err
 }
 
