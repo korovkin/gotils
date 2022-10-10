@@ -28,6 +28,11 @@ const (
 	httpOkmax = 300
 )
 
+var (
+	EmptyJSONBytes  = []byte("{}")
+	EmptyJSONString = string(EmptyJSONBytes)
+)
+
 // FromJSONBytes parses JSON bytes buffer into o
 func FromJSONBytes(buf []byte, o interface{}) error {
 	err := json.Unmarshal(buf, &o)
@@ -48,7 +53,18 @@ func ToJSONBytes(v interface{}) []byte {
 	if err == nil {
 		return bytes
 	}
-	return []byte("{}")
+	return EmptyJSONBytes
+}
+
+// ToJSONBytesOrError serializes v into a buffer of JSON bytes
+func ToJSONBytesOrError(v interface{}) ([]byte, error) {
+	bytes, err := json.MarshalIndent(v, " ", " ")
+	CheckNotFatal(err)
+
+	if err == nil {
+		return bytes, err
+	}
+	return EmptyJSONBytes, err
 }
 
 // ToJSONBytesNoIndent serializes v into a buffer of JSON bytes
@@ -58,13 +74,29 @@ func ToJSONBytesNoIndent(v interface{}) []byte {
 	if err == nil {
 		return bytes
 	}
-	return []byte("{}")
+	return EmptyJSONBytes
+}
+
+// ToJSONBytesNoIndent serializes v into a buffer of JSON bytes
+func ToJSONBytesNoIndentOrError(v interface{}) ([]byte, error) {
+	bytes, err := json.Marshal(v)
+	CheckNotFatal(err)
+	if err == nil {
+		return bytes, err
+	}
+	return EmptyJSONBytes, err
 }
 
 // ToJSONString serializes v into a JSON string
 func ToJSONString(v interface{}) string {
 	bytes := ToJSONBytes(v)
 	return string(bytes)
+}
+
+// ToJSONStringOrError serializes v into a JSON string
+func ToJSONStringOrError(v interface{}) (string, error) {
+	bytes, err := ToJSONBytesOrError(v)
+	return string(bytes), err
 }
 
 // ToXMLString serializes v into an XML string
