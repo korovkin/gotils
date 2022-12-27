@@ -7,27 +7,29 @@ func Set(b, flag Bits) Bits {
 }
 
 func Clear(b, flag Bits) Bits {
-	return (b &^ flag)
+	b.Clear(flag)
+	return b
 }
 
 func Toggle(b, flag Bits) Bits {
-	return (b ^ flag)
+	b.Toggle(flag)
+	return b
+}
+
+func CheckAny(b, flags Bits) bool {
+	return b.CheckAny(flags)
+}
+
+func IsSetAny(b, flags Bits) bool {
+	return b.IsSetAny(flags)
+}
+
+func IsSetAll(b, flags Bits) bool {
+	return b.IsSetAll(flags)
 }
 
 func CheckAll(b, flags Bits) bool {
 	return (b & flags) == flags
-}
-
-func CheckAny(b, flags Bits) bool {
-	return (b & flags) != 0
-}
-
-func HasAll(b, flags Bits) bool {
-	return CheckAll(b, flags)
-}
-
-func HasAny(b, flags Bits) bool {
-	return CheckAny(b, flags)
 }
 
 func (t *Bits) Set(flag Bits) {
@@ -48,4 +50,12 @@ func (t *Bits) CheckAny(flags Bits) bool {
 
 func (t *Bits) CheckAll(flags Bits) bool {
 	return ((*t) & flags) == flags
+}
+
+func (t *Bits) IsSetAny(flags Bits) bool {
+	return t.CheckAny(flags)
+}
+
+func (t *Bits) IsSetAll(flags Bits) bool {
+	return t.CheckAll(flags)
 }
