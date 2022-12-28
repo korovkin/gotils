@@ -9,6 +9,11 @@ import (
 	gotils "github.com/korovkin/gotils"
 )
 
+func init() {
+	log.SetFlags(log.Ltime | log.Lshortfile | log.Lmicroseconds | log.Ldate)
+	log.Println("=> init")
+}
+
 func func001() {
 	func002()
 }

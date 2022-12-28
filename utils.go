@@ -485,8 +485,11 @@ var monotonicUniqueCounter = uint32(0)
 var machineID = PrivateIPV4GetLower16OrDie()
 
 // GenerateUniqueID sorted by time
-func GenerateUniqueID(idType string, now time.Time) (string, string) {
+func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
 	var i = (atomic.AddUint32(&monotonicUniqueCounter, 1)) % 0xFFFF
+
+	// UTC as some machines can be in different time zones:
+	now := nowLocal.UTC()
 
 	dailyFolderID := fmt.Sprintf(
 		"%04d%02d%02d",
