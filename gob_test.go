@@ -1,8 +1,6 @@
 package gotils_test
 
 import (
-	"bytes"
-	"encoding/gob"
 	"net/http"
 	"os"
 	"testing"
@@ -18,26 +16,6 @@ type Error struct {
 	ClientErrCode  int    `json:"err_client_code"`
 }
 
-// TODO:: This is where generics are missing:
-
-func ErrorToGOB(o *Error) []byte {
-	var network bytes.Buffer
-	enc := gob.NewEncoder(&network)
-	err := enc.Encode(*o)
-	gotils.CheckNotFatal(err)
-	return network.Bytes()
-}
-
-func ErrorFromGOB(network []byte) *Error {
-	var s Error
-
-	dec := gob.NewDecoder(bytes.NewBuffer(network))
-	err := dec.Decode(&s)
-	gotils.CheckNotFatal(err)
-
-	return &s
-}
-
 func TestGOB(t *testing.T) {
 	RegisterTestingT(t)
 
@@ -48,10 +26,15 @@ func TestGOB(t *testing.T) {
 			ClientErrCode:  0,
 		}
 
-		eCopy := ErrorFromGOB(ErrorToGOB(e))
+		eCopy := &Error{}
+		gotils.FromGOB(gotils.ToGOB(e), eCopy)
 		Expect(eCopy).NotTo(BeNil())
+
 		// log.Println("=> e:", gotils.ToJSONString(e))
 		// log.Println("=> eCopy:", gotils.ToJSONString(eCopy))
-		Expect(eCopy.ErrorStr).To(BeEquivalentTo(os.ErrNotExist.Error()))
+
+		Expect(eCopy.ErrorStr).To(BeEquivalentTo(e.ErrorStr))
+		Expect(eCopy.HttpStatusCode).To(BeEquivalentTo(e.HttpStatusCode))
+		Expect(eCopy.ClientErrCode).To(BeEquivalentTo(e.ClientErrCode))
 	})
 }

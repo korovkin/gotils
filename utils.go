@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"crypto/md5"
+	"encoding/gob"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
@@ -510,4 +511,24 @@ func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
 		idType)
 
 	return dailyFolderID, uniqueID
+}
+
+func ToGOB(o interface{}) []byte {
+	var network bytes.Buffer
+	enc := gob.NewEncoder(&network)
+	err := enc.Encode(o)
+	CheckNotFatal(err)
+
+	if err != nil {
+		return nil
+	}
+
+	return network.Bytes()
+}
+
+func FromGOB(network []byte, o interface{}) error {
+	dec := gob.NewDecoder(bytes.NewBuffer(network))
+	err := dec.Decode(o)
+	CheckNotFatal(err)
+	return err
 }
