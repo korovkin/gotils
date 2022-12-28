@@ -1,13 +1,12 @@
-package gotils
+package gotils_test
 
 import (
 	"log"
 
+	gotils "github.com/korovkin/gotils"
 	. "github.com/onsi/gomega"
 
 	"testing"
-
-	"github.com/korovkin/gotils"
 )
 
 const (
