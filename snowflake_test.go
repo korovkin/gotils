@@ -20,18 +20,18 @@ func TestSnowflake(t *testing.T) {
 
 	t.Run("snowflake", func(_ *testing.T) {
 		now := time.Now()
-		const idType = "Batman"
+		const idType = "BATMAN"
 
 		a := gotils.SnowflakeID(idType, now)
 		b := gotils.SnowflakeID(idType, now)
 		Expect(a).NotTo(BeEquivalentTo(b))
+		log.Println("a:", a, "b:", b)
 
 		aGroup := gotils.SnowflakeExtractGroup(a, idType)
 		group := fmt.Sprintf("%04d%02d%02d",
 			now.Year(),
 			now.Month(),
 			now.Day())
-
 		Expect(aGroup).To(BeEquivalentTo(group))
 	})
 }
