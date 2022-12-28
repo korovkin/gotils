@@ -17,7 +17,7 @@ func DebugToJSONStringNoIndentEscaped(o interface{}) string {
 	if err == nil {
 		return buffer.String()
 	}
-	return "{ToJSONString:ERROR}"
+	return "{DebugToJSONStringNoIndentEscaped:ERROR}"
 }
 
 func DebugRuntimeCallerFuncion(targetName string) string {
