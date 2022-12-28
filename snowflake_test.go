@@ -1,6 +1,7 @@
 package gotils_test
 
 import (
+	"fmt"
 	"log"
 	"testing"
 	"time"
@@ -19,10 +20,18 @@ func TestSnowflake(t *testing.T) {
 
 	t.Run("snowflake", func(_ *testing.T) {
 		now := time.Now()
+		const idType = "Batman"
 
-		a := gotils.SnowflakeID("BATMAN", now)
-		b := gotils.SnowflakeID("BATMAN", now)
-
+		a := gotils.SnowflakeID(idType, now)
+		b := gotils.SnowflakeID(idType, now)
 		Expect(a).NotTo(BeEquivalentTo(b))
+
+		aGroup := gotils.SnowflakeExtractGroup(a, idType)
+		group := fmt.Sprintf("%04d%02d%02d",
+			now.Year(),
+			now.Month(),
+			now.Day())
+
+		Expect(aGroup).To(BeEquivalentTo(group))
 	})
 }
