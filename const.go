@@ -1,0 +1,3 @@
+package gotils
+
+const StringNone = ""

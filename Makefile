@@ -5,4 +5,4 @@ build:
 	go build
 
 test:
-	go test *_test.go
+	go test -v *_test.go
