@@ -10,23 +10,31 @@ import (
 	gotils "github.com/korovkin/gotils"
 )
 
-type Error struct {
-	ErrorStr       string `json:"err_str"`
-	HttpStatusCode int    `json:"err_http_status_code"`
-	ClientErrCode  int    `json:"err_client_code"`
+type MyObject struct {
+	ErrorStr       string            `json:"err_str"`
+	HttpStatusCode int               `json:"err_http_status_code"`
+	ClientErrCode  int               `json:"err_client_code"`
+	M              map[string]string `json:"m"`
+	A              []string          `json:"a"`
 }
 
 func TestGOB(t *testing.T) {
 	RegisterTestingT(t)
 
 	t.Run("gob", func(_ *testing.T) {
-		e := &Error{
+		e := &MyObject{
 			ErrorStr:       os.ErrNotExist.Error(),
 			HttpStatusCode: http.StatusNotFound,
 			ClientErrCode:  0,
+			M: map[string]string{
+				"a": "aa",
+			},
+			A: []string{
+				"a", "aa", "aaa",
+			},
 		}
 
-		eCopy := &Error{}
+		eCopy := &MyObject{}
 		gotils.FromGOB(gotils.ToGOB(e), eCopy)
 		Expect(eCopy).NotTo(BeNil())
 
