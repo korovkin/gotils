@@ -33,9 +33,9 @@ func TestSnowflake(t *testing.T) {
 
 		aGroup := gotils.SnowflakeExtractGroup(a, idType)
 		group := fmt.Sprintf("%04d%02d%02d",
-			now.Year(),
-			now.Month(),
-			now.Day())
+			now.UTC().Year(),
+			now.UTC().Month(),
+			now.UTC().Day())
 		Expect(aGroup).To(BeEquivalentTo(group))
 		Expect(cGroup).To(BeEquivalentTo(group))
 

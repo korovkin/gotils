@@ -42,22 +42,23 @@ func SnowflakeID(idType string, nowLocal time.Time) string {
 	return uniqueID
 }
 
-func SnowflakeIDWithGroup(idType string, now time.Time) (groupID string, uniqueID string) {
+func SnowflakeIDWithGroup(idType string, nowLocal time.Time) (groupID string, uniqueID string) {
+	nowUTC := nowLocal.UTC()
 	if reOnlyChars.MatchString(idType) {
 		var uniqueC = (atomic.AddUint32(&snowflakeMonoCount, 1)) % 0xFFFF
 		groupID = fmt.Sprintf("%04d%02d%02d",
-			now.Year(),
-			now.Month(),
-			now.Day())
+			nowUTC.Year(),
+			nowUTC.Month(),
+			nowUTC.Day())
 		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%010X_%04X_%04X",
 			idType,
-			now.Year(),
-			now.Month(),
-			now.Day(),
-			now.Hour(),
-			now.Minute(),
-			now.Second(),
-			now.Nanosecond(),
+			nowUTC.Year(),
+			nowUTC.Month(),
+			nowUTC.Day(),
+			nowUTC.Hour(),
+			nowUTC.Minute(),
+			nowUTC.Second(),
+			nowUTC.Nanosecond(),
 			snowflakeMachineID,
 			uniqueC)
 
