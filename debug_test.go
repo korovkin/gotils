@@ -11,7 +11,6 @@ import (
 
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile | log.Lmicroseconds | log.Ldate)
-	log.Println("=> init")
 }
 
 func func001() {
@@ -24,7 +23,7 @@ func func002() {
 
 func func003() {
 	name := gotils.DebugRuntimeCallerFuncion("func003")
-	log.Println("=> DebugRuntimeCallerFuncion:", name)
+	// log.Println("=> DebugRuntimeCallerFuncion:", name)
 	Expect(name).To(BeEquivalentTo("func002"))
 }
 

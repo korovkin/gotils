@@ -462,6 +462,15 @@ func PrivateIPV4GetLower16OrDie() uint16 {
 	return uint16(ip[2])<<8 + uint16(ip[3])
 }
 
+func PrivateIPV4GetLower32OrDie() uint32 {
+	ip, err := PrivateIPV4Get()
+	if err != nil {
+		log.Fatalln("PrivateIPV4GetLower16OrDie: failed:", err.Error())
+		return 0
+	}
+	return uint32(ip[0])<<24 + uint32(ip[1])<<16 + uint32(ip[2])<<8 + uint32(ip[3])
+}
+
 // HTTPParamGetInt get an integer param from an HTTP request
 func HTTPParamGetInt(req *http.Request, key string, defaultValue int) int {
 	vv := req.URL.Query().Get(key)

@@ -13,8 +13,8 @@ import (
 var ErrorInvalidId = errors.New("invalid Snowflake ID")
 
 var snowflakeMonoCount = uint32(0)
-var snowflakeMachineID = PrivateIPV4GetLower16OrDie()
-var reOnlyChars *regexp.Regexp = regexp.MustCompile(`[a-zA-Z]+`)
+var snowflakeMachineID = PrivateIPV4GetLower32OrDie()
+var reOnlyChars *regexp.Regexp = regexp.MustCompile(`[a-zA-Z0-9]+`)
 
 func SnowflakeID(idType string, nowLocal time.Time) string {
 	uniqueID := ""
@@ -22,7 +22,7 @@ func SnowflakeID(idType string, nowLocal time.Time) string {
 
 	if reOnlyChars.MatchString(idType) {
 		var uniqueC = (atomic.AddUint32(&snowflakeMonoCount, 1)) % 0xFFFF
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%010X_%04X_%04X",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%08x_%04x",
 			idType,
 			nowUTC.Year(),
 			nowUTC.Month(),
@@ -30,13 +30,11 @@ func SnowflakeID(idType string, nowLocal time.Time) string {
 			nowUTC.Hour(),
 			nowUTC.Minute(),
 			nowUTC.Second(),
-			nowUTC.Nanosecond(),
 			snowflakeMachineID,
 			uniqueC)
 	} else {
-		err := ErrorInvalidId
 		log.Fatalln("Invalid ID:", idType)
-		CheckFatal(err)
+		CheckFatal(ErrorInvalidId)
 	}
 
 	return uniqueID
@@ -50,7 +48,8 @@ func SnowflakeIDWithGroup(idType string, nowLocal time.Time) (groupID string, un
 			nowUTC.Year(),
 			nowUTC.Month(),
 			nowUTC.Day())
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%010X_%04X_%04X",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%08x_%04x",
+
 			idType,
 			nowUTC.Year(),
 			nowUTC.Month(),
@@ -58,14 +57,11 @@ func SnowflakeIDWithGroup(idType string, nowLocal time.Time) (groupID string, un
 			nowUTC.Hour(),
 			nowUTC.Minute(),
 			nowUTC.Second(),
-			nowUTC.Nanosecond(),
 			snowflakeMachineID,
 			uniqueC)
-
 	} else {
-		err := ErrorInvalidId
 		log.Fatalln("Invalid ID:", idType)
-		CheckFatal(err)
+		CheckFatal(ErrorInvalidId)
 	}
 
 	return groupID, uniqueID

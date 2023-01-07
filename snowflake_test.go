@@ -12,7 +12,6 @@ import (
 
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile | log.Lmicroseconds | log.Ldate)
-	log.Println("=> init")
 }
 
 func TestSnowflake(t *testing.T) {
@@ -25,11 +24,9 @@ func TestSnowflake(t *testing.T) {
 		a := gotils.SnowflakeID(idType, now)
 		b := gotils.SnowflakeID(idType, now)
 		Expect(a).NotTo(BeEquivalentTo(b))
-		log.Println("a:", a)
-		log.Println("b:", b)
 
 		cGroup, c := gotils.SnowflakeIDWithGroup(idType, now)
-		log.Println("c:", c, "cGroup:", cGroup)
+		Expect(c).To(HavePrefix(idType))
 
 		aGroup := gotils.SnowflakeExtractGroup(a, idType)
 		group := fmt.Sprintf("%04d%02d%02d",

@@ -23,9 +23,9 @@ func TestTime(t *testing.T) {
 	t.Run("zero_time", func(_ *testing.T) {
 		// 2022-12-29 23:40:50 +0000 UTC
 		// 2022-12-29 15:40:50 -0800 PST
-		var ts gotils.Time
-		log.Println("=> ts: zero:", ts)
-		log.Println("=> ts: zero: json:", gotils.ToJSONString(ts))
+		// var ts gotils.Time
+		// log.Println("=> ts: zero:", ts)
+		// log.Println("=> ts: zero: json:", gotils.ToJSONString(ts))
 
 		response := &TestStruct{}
 		responseMap := map[string]interface{}{}
