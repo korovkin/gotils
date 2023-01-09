@@ -465,7 +465,7 @@ func PrivateIPV4GetLower16OrDie() uint16 {
 func PrivateIPV4GetLower32OrDie() uint32 {
 	ip, err := PrivateIPV4Get()
 	if err != nil {
-		log.Fatalln("PrivateIPV4GetLower16OrDie: failed:", err.Error())
+		log.Fatalln("PrivateIPV4GetLower32OrDie: failed:", err.Error())
 		return 0
 	}
 	return uint32(ip[0])<<24 + uint32(ip[1])<<16 + uint32(ip[2])<<8 + uint32(ip[3])
