@@ -492,7 +492,7 @@ func HTTPParamGetString(req *http.Request, key string, defaultValue string) stri
 }
 
 var monotonicUniqueCounter = uint32(0)
-var machineID = PrivateIPV4GetLower16OrDie()
+var machineID = PrivateIPV4GetLower32OrDie()
 
 // GenerateUniqueID sorted by time
 func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
@@ -507,21 +507,21 @@ func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
 		now.Month(),
 		now.Day())
 
-	uniqueID := fmt.Sprintf("%04d%02d%02d%02d%02d%02dn%010Xm%04Xi%03X_%s",
+	uniqueID := fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d%08x%02x",
+		idType,
 		now.Year(),
 		now.Month(),
 		now.Day(),
 		now.Hour(),
 		now.Minute(),
 		now.Second(),
-		now.Nanosecond(),
 		machineID,
-		i,
-		idType)
+		i)
 
 	return dailyFolderID, uniqueID
 }
 
+// ToGOB serialize an interface into a GOB
 func ToGOB(o interface{}) []byte {
 	var network bytes.Buffer
 	enc := gob.NewEncoder(&network)
@@ -535,6 +535,7 @@ func ToGOB(o interface{}) []byte {
 	return network.Bytes()
 }
 
+// FromGOB parse GOB blob into an interface object
 func FromGOB(network []byte, o interface{}) error {
 	dec := gob.NewDecoder(bytes.NewBuffer(network))
 	err := dec.Decode(o)

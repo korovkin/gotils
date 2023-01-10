@@ -22,7 +22,7 @@ func SnowflakeID(idType string, nowLocal time.Time) string {
 
 	if reOnlyChars.MatchString(idType) {
 		var uniqueC = (atomic.AddUint32(&snowflakeMonoCount, 1)) % 0xFFFF
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%08x_%04x",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%08x%04x",
 			idType,
 			nowUTC.Year(),
 			nowUTC.Month(),
@@ -48,7 +48,7 @@ func SnowflakeIDWithGroup(idType string, nowLocal time.Time) (groupID string, un
 			nowUTC.Year(),
 			nowUTC.Month(),
 			nowUTC.Day())
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d_%02d%02d%02d_%08x_%04x",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%08x%04x",
 
 			idType,
 			nowUTC.Year(),
@@ -71,11 +71,8 @@ func SnowflakeExtractGroup(id string, idType string) string {
 	groupID := ""
 
 	components := strings.Split(id, idType)
-	if len(components) > 0 {
-		components = strings.Split(components[1], "_")
-		if len(components) > 1 {
-			groupID = components[1]
-		}
+	if len(components) > 1 {
+		groupID = components[1][1:9]
 	}
 
 	return groupID

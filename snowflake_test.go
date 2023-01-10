@@ -23,6 +23,8 @@ func TestSnowflake(t *testing.T) {
 
 		a := gotils.SnowflakeID(idType, now)
 		b := gotils.SnowflakeID(idType, now)
+		log.Println("a:", a)
+		log.Println("b:", b)
 		Expect(a).NotTo(BeEquivalentTo(b))
 
 		cGroup, c := gotils.SnowflakeIDWithGroup(idType, now)
