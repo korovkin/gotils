@@ -45,3 +45,8 @@ func TestUniqueIDs(t *testing.T) {
 
 	})
 }
+
+func TestUniqueIDIP(t *testing.T) {
+	machineid := gotils.IPBasedMachineID()
+	log.Println("=> machineid:", machineid)
+}

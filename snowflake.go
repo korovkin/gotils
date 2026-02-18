@@ -13,7 +13,7 @@ import (
 var ErrorInvalidId = errors.New("invalid Snowflake ID")
 
 var snowflakeMonoCount = uint32(0)
-var snowflakeMachineID = PrivateIPV4GetLower32OrDie()
+var snowflakeMachineID = IPBasedMachineID()
 var reOnlyChars *regexp.Regexp = regexp.MustCompile(`[a-zA-Z0-9]+`)
 
 func SnowflakeID(idType string, nowLocal time.Time) string {
@@ -22,7 +22,7 @@ func SnowflakeID(idType string, nowLocal time.Time) string {
 
 	if reOnlyChars.MatchString(idType) {
 		var uniqueC = (atomic.AddUint32(&snowflakeMonoCount, 1)) % 0xFFFF
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%08x%04x",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%12s%04x",
 			idType,
 			nowUTC.Year(),
 			nowUTC.Month(),
@@ -48,7 +48,7 @@ func SnowflakeIDWithGroup(idType string, nowLocal time.Time) (groupID string, un
 			nowUTC.Year(),
 			nowUTC.Month(),
 			nowUTC.Day())
-		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%08x%04x",
+		uniqueID = fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d_%12s%04x",
 
 			idType,
 			nowUTC.Year(),

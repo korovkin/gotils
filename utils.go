@@ -428,6 +428,8 @@ func PrivateIPV4Get() (net.IP, error) {
 			continue
 		}
 
+		log.Println("ip: a:", a)
+
 		ip := ipnet.IP.To4()
 		if IsPrivateIPV4Get(ip) {
 			return ip, err
@@ -450,6 +452,53 @@ func PrivateIPV4GetLower16() (uint16, error) {
 	}
 
 	return uint16(ip[2])<<8 + uint16(ip[3]), nil
+}
+
+// IPBasedMachineID get a unique id for the machine based of the IP address
+func IPBasedMachineID() string {
+	ip, err := MachineIPAsString()
+	CheckFatal(err)
+	return ip
+}
+
+func MachineIPAsString() (string, error) {
+	as, err := net.InterfaceAddrs()
+	CheckNotFatal(err)
+
+	var ipMax net.IP = nil
+	ipMaxLen := 0
+
+	for _, a := range as {
+		ipnet, ok := a.(*net.IPNet)
+		if !ok {
+			log.Println("failed: net.IPNet: ", a)
+			continue
+		}
+		ip := ipnet.IP.To16()
+		c := 0
+		for i := 15; i >= 0; i-- {
+			if ip[i] > 0 {
+				c++
+			}
+		}
+
+		if c >= ipMaxLen {
+			ipMax = ip
+			ipMaxLen = c
+		}
+		// h := hex.EncodeToString((ip)[:])
+		// log.Println("=> a:", a, "h:", h)
+	}
+
+	ipId := ""
+	if ipMax != nil {
+		ipId = hex.EncodeToString((ipMax)[:])
+		log.Println("=> ipMax:", ipMax, "ipId:", ipId)
+	} else {
+		err = errors.New("failed to get a unique IP address")
+	}
+
+	return ipId, err
 }
 
 // PrivateIPV4GetLower16OrDie gets the lower 16 bits of the IP address
@@ -492,7 +541,7 @@ func HTTPParamGetString(req *http.Request, key string, defaultValue string) stri
 }
 
 var monotonicUniqueCounter = uint32(0)
-var machineID = PrivateIPV4GetLower32OrDie()
+var machineID = IPBasedMachineID()
 
 // GenerateUniqueID sorted by time
 func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
@@ -507,7 +556,7 @@ func GenerateUniqueID(idType string, nowLocal time.Time) (string, string) {
 		now.Month(),
 		now.Day())
 
-	uniqueID := fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d%08x%02x",
+	uniqueID := fmt.Sprintf("%s_%04d%02d%02d%02d%02d%02d%32x%02x",
 		idType,
 		now.Year(),
 		now.Month(),
