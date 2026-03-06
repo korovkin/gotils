@@ -6,10 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/korovkin/gotils"
 	. "github.com/onsi/gomega"
-	"github.com/stretchr/testify/assert"
-
-	gotils "github.com/korovkin/gotils"
 )
 
 func init() {
@@ -17,13 +15,13 @@ func init() {
 }
 
 func TestImplode(t *testing.T) {
+	RegisterTestingT(t)
+
 	s := gotils.Implode("superman", "batman", "spiderman", "wonderwoman")
 	l := gotils.Explode(s)
-	assert.Equal(t, 4, len(l))
-	assert.Equal(t, "superman", l[0])
-	assert.Equal(t, "batman", l[1])
-	assert.Equal(t, "spiderman", l[2])
-	assert.Equal(t, "wonderwoman", l[3])
+
+	Expect(l).To(HaveLen(4))
+	Expect(l).To(Equal([]string{"superman", "batman", "spiderman", "wonderwoman"}))
 }
 
 func ExampleImplode() {
@@ -39,23 +37,29 @@ func ExampleExplode() {
 }
 
 func TestImplode2(t *testing.T) {
+	RegisterTestingT(t)
+
 	superman, batman := gotils.Explode2(gotils.Implode2("superman", "batman"))
-	assert.Equal(t, superman, "superman", "")
-	assert.Equal(t, batman, "batman", "")
+	Expect(superman).To(Equal("superman"))
+	Expect(batman).To(Equal("batman"))
 }
 
 func TestImplode3(t *testing.T) {
+	RegisterTestingT(t)
+
 	superman, batman, spiderman := gotils.Explode3(gotils.Implode3("superman", "batman", "spiderman"))
-	assert.Equal(t, superman, "superman", "")
-	assert.Equal(t, batman, "batman", "")
-	assert.Equal(t, spiderman, "spiderman", "")
+	Expect(superman).To(Equal("superman"))
+	Expect(batman).To(Equal("batman"))
+	Expect(spiderman).To(Equal("spiderman"))
 }
 
 func TestUniqueID(t *testing.T) {
+	RegisterTestingT(t)
+
 	superman, batman, spiderman := gotils.Explode3(gotils.Implode3("superman", "batman", "spiderman"))
-	assert.Equal(t, superman, "superman", "")
-	assert.Equal(t, batman, "batman", "")
-	assert.Equal(t, spiderman, "spiderman", "")
+	Expect(superman).To(Equal("superman"))
+	Expect(batman).To(Equal("batman"))
+	Expect(spiderman).To(Equal("spiderman"))
 }
 
 func TestUniqueIDs(t *testing.T) {
@@ -65,11 +69,14 @@ func TestUniqueIDs(t *testing.T) {
 		now := time.Now()
 		a, aa := gotils.GenerateUniqueID("test", now)
 		log.Println("=> a:", a, aa)
-
+		Expect(a).NotTo(BeEmpty())
+		Expect(aa).NotTo(BeEmpty())
 	})
 }
 
 func TestUniqueIDIP(t *testing.T) {
-	machineid := gotils.IPBasedMachineID()
-	log.Println("=> machineid:", machineid)
+	RegisterTestingT(t)
+	machineid := gotils.PrivateIPV4GetLower32OrDie()
+	log.Printf("=> machineid: %08x\n", machineid)
+	Expect(machineid).NotTo(BeZero())
 }

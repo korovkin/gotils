@@ -6,3 +6,7 @@ build:
 
 test:
 	go test -v *_test.go
+
+tidy:
+	go mod tidy
+	go mod vendor
