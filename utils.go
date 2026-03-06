@@ -397,6 +397,16 @@ func URLIsValid(urlString string) error {
 	return err
 }
 
+// Implode concatenates any number of strings with the separator 'sep'
+func Implode(args ...string) string {
+	return strings.Join(args, sep)
+}
+
+// Explode splits the string by the separator 'sep' and returns a slice of strings
+func Explode(x string) []string {
+	return strings.Split(x, sep)
+}
+
 // Implode2 cancatenates two strings with a seperator 'sep'
 func Implode2(a, b string) string {
 	return strings.Join([]string{a, b}, sep)
