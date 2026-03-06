@@ -46,74 +46,90 @@ func FromJSONString(buf string, o interface{}) error {
 	return err
 }
 
-// ToJSONBytes serializes v into a buffer of JSON bytes
+// ToJSONBytes serializes v into a buffer of compact JSON bytes
 func ToJSONBytes(v interface{}) []byte {
-	bytes, err := json.MarshalIndent(v, " ", " ")
-	CheckNotFatal(err)
-
-	if err == nil {
-		return bytes
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		CheckNotFatal(err)
+		return nil
 	}
-	return EmptyJSONBytes
+	return bytes
 }
 
-// ToJSONBytesOrError serializes v into a buffer of JSON bytes
+// ToJSONBytesOrError serializes v into a buffer of compact JSON bytes
 func ToJSONBytesOrError(v interface{}) ([]byte, error) {
-	bytes, err := json.MarshalIndent(v, " ", " ")
-	CheckNotFatal(err)
-
-	if err == nil {
-		return bytes, err
-	}
-	return EmptyJSONBytes, err
-}
-
-// ToJSONBytesNoIndent serializes v into a buffer of JSON bytes
-func ToJSONBytesNoIndent(v interface{}) []byte {
 	bytes, err := json.Marshal(v)
-	CheckNotFatal(err)
-	if err == nil {
-		return bytes
+	if err != nil {
+		CheckNotFatal(err)
+		return nil, err
 	}
-	return EmptyJSONBytes
+	return bytes, nil
 }
 
-// ToJSONBytesNoIndent serializes v into a buffer of JSON bytes
-func ToJSONBytesNoIndentOrError(v interface{}) ([]byte, error) {
-	bytes, err := json.Marshal(v)
-	CheckNotFatal(err)
-	if err == nil {
-		return bytes, err
+// ToPrettyJSONBytes serializes v into a buffer of indented JSON bytes
+func ToPrettyJSONBytes(v interface{}) []byte {
+	bytes, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		CheckNotFatal(err)
+		return nil
 	}
-	return EmptyJSONBytes, err
+	return bytes
 }
 
-// ToJSONString serializes v into a JSON string
+// ToPrettyJSONBytesOrError serializes v into a buffer of indented JSON bytes
+func ToPrettyJSONBytesOrError(v interface{}) ([]byte, error) {
+	bytes, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		CheckNotFatal(err)
+		return nil, err
+	}
+	return bytes, nil
+}
+
+// ToJSONString serializes v into a compact JSON string
 func ToJSONString(v interface{}) string {
 	bytes := ToJSONBytes(v)
+	if bytes == nil {
+		return ""
+	}
 	return string(bytes)
 }
 
-// ToJSONStringOrError serializes v into a JSON string
+// ToJSONStringOrError serializes v into a compact JSON string
 func ToJSONStringOrError(v interface{}) (string, error) {
 	bytes, err := ToJSONBytesOrError(v)
-	return string(bytes), err
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+// ToPrettyJSONString serializes v into an indented JSON string
+func ToPrettyJSONString(v interface{}) string {
+	bytes := ToPrettyJSONBytes(v)
+	if bytes == nil {
+		return ""
+	}
+	return string(bytes)
+}
+
+// ToPrettyJSONStringOrError serializes v into an indented JSON string
+func ToPrettyJSONStringOrError(v interface{}) (string, error) {
+	bytes, err := ToPrettyJSONBytesOrError(v)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 // ToXMLString serializes v into an XML string
 func ToXMLString(v interface{}) string {
-	bytes, err := xml.MarshalIndent(v, " ", " ")
+	bytes, err := xml.MarshalIndent(v, "", "  ")
 	CheckNotFatal(err)
 	if err == nil {
 		return string(bytes)
 	}
 	return ""
-}
-
-// ToJSONStringNoIndent serialize v into a JSON string
-func ToJSONStringNoIndent(v interface{}) string {
-	bytes := ToJSONBytesNoIndent(v)
-	return string(bytes)
 }
 
 // KeepShort keeps the string short
@@ -167,7 +183,7 @@ func ReadJSONFile(filename string, o interface{}) error {
 func WriteJSONFile(filename string, o interface{}) error {
 	log.Println("WriteJSONFile:", filename)
 
-	err := ioutil.WriteFile(filename, []byte(ToJSONString(o)), 0666)
+	err := ioutil.WriteFile(filename, []byte(ToPrettyJSONString(o)), 0666)
 	CheckNotFatal(err)
 	if err != nil {
 		return err
@@ -188,7 +204,7 @@ func WriteJSONFileCompressed(filename string, o interface{}) error {
 	}
 	defer w.Close()
 
-	_, err = w.Write(ToJSONBytes(o))
+	_, err = w.Write(ToPrettyJSONBytes(o))
 	CheckNotFatal(err)
 	if err != nil {
 		return err
